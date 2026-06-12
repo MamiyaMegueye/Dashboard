@@ -4,11 +4,11 @@
 # ============================================================
 
 # --- Oracle SNDE (lecture seule) ---
-ORACLE_USER=Tapha
-ORACLE_PASSWORD=disi
-ORACLE_HOST=192.168.10.30
+ORACLE_USER=
+ORACLE_PASSWORD=
+ORACLE_HOST=
 ORACLE_PORT=1521
-ORACLE_SERVICE=Sigasnde
+ORACLE_SERVICE=
 
 # --- Filtre métier zone ---
 # 1=INTERIEUR, 2=NOUAKCHOTT, 3=NOUADHIBOU
