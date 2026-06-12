@@ -1,0 +1,16 @@
+[Unit]
+Description=SNDE - Next.js dashboard frontend
+After=network.target
+
+[Service]
+Type=simple
+User=snde
+WorkingDirectory=/opt/snde-releve/frontend
+Environment=NODE_ENV=production
+Environment=PORT=3000
+ExecStart=/usr/bin/npm run start
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

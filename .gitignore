@@ -1,0 +1,40 @@
+﻿# === Credentials (CRITIQUE) ===
+backend/.env
+backend/.env.*
+!backend/.env.example
+.env
+.env.local
+
+# === Python ===
+backend/.venv/
+.venv/
+**/__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# === Node ===
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+node_modules/
+
+# === DuckDB local (volumineux) ===
+backend/data/*.duckdb
+backend/data/*.duckdb.wal
+*.duckdb
+*.duckdb.wal
+
+# === Logs ===
+backend/logs/
+*.log
+
+# === OS ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === IDE ===
+.vscode/
+.idea/
+*.swp

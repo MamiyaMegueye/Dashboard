@@ -1,0 +1,2 @@
+# DuckDB files will be created here at runtime
+# (snde.duckdb + snde.duckdb.wal)

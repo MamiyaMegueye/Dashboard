@@ -1,0 +1,16 @@
+[Unit]
+Description=SNDE - API FastAPI (dashboard relevés)
+After=network.target
+
+[Service]
+Type=simple
+# Adapter le user / chemins
+User=snde
+WorkingDirectory=/opt/snde-releve/backend
+EnvironmentFile=/opt/snde-releve/backend/.env
+ExecStart=/opt/snde-releve/backend/.venv/bin/uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --workers 2
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,35 @@
+# ============================================================
+# SNDE - Dashboard Relevés : configuration backend
+# Copier ce fichier en .env puis remplir les vraies valeurs
+# ============================================================
+
+# --- Oracle SNDE (lecture seule) ---
+ORACLE_USER=Tapha
+ORACLE_PASSWORD=disi
+ORACLE_HOST=192.168.10.30
+ORACLE_PORT=1521
+ORACLE_SERVICE=Sigasnde
+
+# --- Filtre métier zone ---
+# 1=INTERIEUR, 2=NOUAKCHOTT, 3=NOUADHIBOU
+ZONE_ID=2
+# Entités à exclure (admin / non-opérationnelles)
+# 1=DIRECTION SNDE, 2=ZONE NOUAKCHOTT, 63=Khadamaty (à investiguer)
+STR_ID_EXCLUDE=1,2,63
+
+# --- DuckDB ---
+DUCKDB_PATH=./data/snde.duckdb
+
+# --- Pipeline ---
+INITIAL_LOAD_DAYS=90
+INCREMENTAL_OVERLAP_HOURS=4
+
+# --- Marts ---
+MART_WINDOW_DAYS=30
+
+# --- API ---
+API_HOST=0.0.0.0
+API_PORT=8000
+ALLOWED_ORIGINS=http://localhost:3000
+
+LOG_LEVEL=INFO

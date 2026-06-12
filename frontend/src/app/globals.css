@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Styles globaux — palette SNDE et table générique
+   ============================================================ */
+
+@layer base {
+  body {
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+                 Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  }
+  code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco,
+                 Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+}
+
+@layer components {
+  /* Table générique utilisée dans tous les panels */
+  .table-wrap {
+    @apply overflow-auto rounded-lg border border-slate-200;
+  }
+  .table-wrap table {
+    @apply min-w-full divide-y divide-slate-100 text-sm;
+  }
+  .table-wrap thead {
+    @apply sticky top-0 z-10 bg-slate-50;
+  }
+  .table-wrap thead th {
+    @apply px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600;
+  }
+  .table-wrap tbody td {
+    @apply whitespace-nowrap px-3 py-2 text-slate-700;
+  }
+  .table-wrap tbody tr {
+    @apply border-b border-slate-100 transition-colors;
+  }
+  .table-wrap tbody tr:hover {
+    @apply bg-slate-50;
+  }
+  .table-wrap tbody tr.warn {
+    @apply bg-amber-50/40;
+  }
+  .table-wrap tbody tr.warn:hover {
+    @apply bg-amber-50;
+  }
+  .table-wrap tbody tr.danger {
+    @apply bg-rose-50/40;
+  }
+  .table-wrap tbody tr.danger:hover {
+    @apply bg-rose-50;
+  }
+}

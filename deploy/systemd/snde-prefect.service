@@ -1,0 +1,15 @@
+[Unit]
+Description=SNDE - Prefect worker (pipeline relevés toutes les 30 min)
+After=network.target
+
+[Service]
+Type=simple
+User=snde
+WorkingDirectory=/opt/snde-releve/backend
+EnvironmentFile=/opt/snde-releve/backend/.env
+ExecStart=/opt/snde-releve/backend/.venv/bin/prefect worker start --pool default-agent-pool
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
