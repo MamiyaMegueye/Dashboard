@@ -111,7 +111,11 @@ CREATE INDEX IF NOT EXISTS idx_abonnement_sectid   ON raw_abonnement(SECT_ID);
 VIEW_RELEVE_ENRICHED = """
 CREATE OR REPLACE VIEW v_releve AS
 SELECT
-    r.*,
+    -- 🔧 v2.2.1 : MATRICULE remplacé par COALESCE(MATRICULE, REL_MAT)
+    --     car r.MATRICULE est souvent vide en Oracle, le vrai matricule
+    --     du releveur est dans r.REL_MAT
+    r.* EXCLUDE (MATRICULE),
+    COALESCE(NULLIF(TRIM(r.MATRICULE), ''), TRIM(r.REL_MAT)) AS MATRICULE,
     c.LIBELLE                          AS COMPTAGE_LIB,
     ce.CENTRE_LIB                      AS CENTRE_LIB,
     s.SECT_LIB                         AS SECT_LIB,

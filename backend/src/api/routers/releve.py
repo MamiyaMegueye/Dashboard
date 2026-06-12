@@ -470,14 +470,26 @@ def get_alertes(
     limit: int = Query(50, ge=1, le=500),
 ) -> list[dict]:
     """
-    🆕 v2.2 — Endpoint enrichi avec stats temps réel du secteur.
+    🆕 v2.2.2 — Endpoint enrichi avec stats temps réel du secteur.
     Pour chaque alerte de franchissement (≥90%), join avec v_secteur_cycle
     pour récupérer les stats actuelles (% conso nulle, illisibles, normaux,
     nb abonnés avec anomalies) — utilisé par AlertesPanel selon la maquette.
+
+    🔧 FIX v2.2.2 :
+      - Dédup de v_secteur_cycle via ROW_NUMBER : 1 seule ligne par
+        (centre, secteur, cycle) — garde l'IDCLOTURE le plus récent.
+        Évite les doublons d'alertes côté frontend (warning React "duplicate key").
+      - WHERE construit proprement (plus de AND orphelin si only_unack=False).
     """
-    where = "WHERE a.acknowledged = FALSE" if only_unack else ""
+    # Construction propre du WHERE : la condition CLOTURE est TOUJOURS appliquée,
+    # acknowledged=FALSE uniquement si only_unack=True.
+    where_parts = ["(v.CLOTURE = 0 OR v.CLOTURE IS NULL)"]
+    if only_unack:
+        where_parts.append("a.acknowledged = FALSE")
+    where_sql = "WHERE " + " AND ".join(where_parts)
+
     return _fetch_all(f"""
-        SELECT DISTINCT
+        SELECT
             a.alert_id, a.alert_type,
             a.STR_ID, ce.CENTRE_LIB,
             a.SECT_ID, sec.SECT_LIB,
@@ -487,7 +499,7 @@ def get_alertes(
             v.pct_avancement                    AS current_pct,
             v.parc_cloture                      AS parc_total,
             v.saisis_declare                    AS nb_saisis,
-            v.saisis_reel                    AS saisis_reel,
+            v.saisis_reel                       AS saisis_reel,
             v.nb_conso_nulle, v.nb_conso_faible,
             v.nb_conso_normale, v.nb_conso_elevee,
             v.nb_illisible, v.nb_accessible, v.nb_inaccessible,
@@ -507,13 +519,27 @@ def get_alertes(
         FROM alerts_log a
         LEFT JOIN ref_centre  ce ON ce.CENTRE_ID = a.STR_ID
         LEFT JOIN ref_secteur sec ON sec.SECT_ID = a.SECT_ID
-        LEFT JOIN v_secteur_cycle v
+        LEFT JOIN (
+            -- 🔧 Dédup v_secteur_cycle : 1 seule ligne par (centre, secteur, cycle)
+            --    en gardant l'IDCLOTURE le plus récent.
+            --    Sans ça, CLOTURE_SECTEUR peut avoir plusieurs lignes pour le
+            --    même (STR_ID, SECT_ID, ANNEE, MOIS) avec IDCLOTURE différents,
+            --    ce qui provoquait des doublons côté frontend.
+            SELECT * FROM (
+                SELECT vsc.*,
+                       ROW_NUMBER() OVER (
+                           PARTITION BY centre_code, secteur_code, ANNEE, MOIS
+                           ORDER BY IDCLOTURE DESC
+                       ) AS rn
+                FROM v_secteur_cycle vsc
+            ) ranked
+            WHERE rn = 1
+        ) v
                ON v.centre_code = a.STR_ID
               AND v.secteur_code = a.SECT_ID
               AND v.ANNEE = a.ANNEE
               AND v.MOIS = a.MOIS
-        {where}
-        AND (v.CLOTURE = 0 OR v.CLOTURE IS NULL)
+        {where_sql}
         ORDER BY a.detected_at DESC
         LIMIT {limit}
     """)

@@ -482,7 +482,7 @@ export default function AlertesPanel({ onOpenDetail }: Props) {
 
             return (
               <div
-                key={a.alert_id}
+                key={`${a.alert_id}-${a.STR_ID}-${a.SECT_ID}-${a.ANNEE}-${a.MOIS}`}
                 className={`rounded-xl border bg-white p-4 shadow-sm transition hover:shadow-md ${borderColor}`}
               >
                 {/* ----- Header de l'alerte ----- */}
